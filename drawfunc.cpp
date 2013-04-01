@@ -7,9 +7,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+#include "gl.h"
 
 struct color4{ float r, g, b, a; };
 

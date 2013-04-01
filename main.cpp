@@ -8,8 +8,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <GL/gl.h>
-#include <GL/glut.h>
+
+#include "gl.h"
 
 using namespace std;
 
