@@ -16,13 +16,13 @@ void draw_background(float x, float y);
 color4 star_color(float y, float max_y);
 
 // point in y where color transition occurs
-#define TRANSITION 0.3f
+#define TRANSITION 0.5f
 #define NUM_SMALL_STARS 2500
 #define NUM_BIG_STARS 200
 
-static float orange[3] = {1.0f,0.3f,0};
-static float blueish[3] = {0.0f,0.5f,0.7f};
-static float black[3] = {0.0f,0.0f,0.0f};
+static float orange[3] = {0.2f,0.1f,0.4};
+static float blueish[3] = {0.0f,0.1f,0.2f};
+static float black[3] = {0.0f,0.0f,0.1f};
 
 extern GLsizei	gw, gh;
 
