@@ -2,7 +2,7 @@
 cc		= clang 
 CC		= clang++
 
-LIBS = -lm -framework OpenGL -framework GLUT
+LIBS = -lm -framework OpenGL -framework GLUT -framework Cocoa
 
 #///////////////////////////////////////////////////////////////////////////////
 
@@ -14,14 +14,14 @@ CFLAGS = --std=c++0x -g -I. -DOSX
 .SUFFIXES:	.cpp .o .obj
 
 .cpp.o:
-	$(CC) $(CFLAGS) -O3 -c $< -o $@ 
+	$(CC) -x objective-c++ $(CFLAGS) -O3 -c $< -o $@ 
 
 #///////////////////////////////////////////////////////////////////////////////
 
-OBJS = drawfunc.o 
+OBJS = main.o drawfunc.o 
 
 all:	$(OBJS)
-	$(CC) main.cpp -o twilight $(CFLAGS) $(OBJS) $(LIBS)
+	$(CC) -o twilight $(CFLAGS) $(OBJS) $(LIBS)
 
 #///////////////////////////////////////////////////////////////////////////////
 

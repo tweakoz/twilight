@@ -11,4 +11,5 @@ TODO :
 >morph mode
  (evolve gradient color scheme over time)
 
-![Screenshot](twilight.jpg)
+![Screenshot](screens/twilight.jpg)
+![](screens/twilight_osx.jpg)

@@ -29,10 +29,24 @@ GLsizei	gw, gh;
 
 int mainwinid;
 
+#if defined(OSX)
+#import <Cocoa/Cocoa.h>
+
+@interface MyOpenGLView : NSOpenGLView
+@end
+@implementation MyOpenGLView
+-(void) drawRect: (NSRect) bounds
+{
+    drawfunc();
+}
+@end
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char * argv[] )
 {   	
+#if !defined(OSX)
     glutInitWindowPosition( 0, 0 );
     glutInitWindowSize( 640, 480 );	
     glutInit(&argc, argv);
@@ -56,6 +70,20 @@ int main( int argc, char * argv[] )
     glutMotionFunc( motionhandler );
    
     glutMainLoop(); //glutMainLoopEvent();
+#else
+    NSApplication *app = [[NSApplication alloc] init];
+    NSRect mainDisplayRect = [[NSScreen mainScreen] frame];
+    NSWindow *fullScreenWindow = [[NSWindow alloc] initWithContentRect: mainDisplayRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+
+    gw = mainDisplayRect.size.width;
+    gh = mainDisplayRect.size.height;
+
+    [fullScreenWindow setLevel:kCGDesktopWindowLevel];
+    [fullScreenWindow setContentView:[[MyOpenGLView alloc] init]];
+    [fullScreenWindow makeKeyAndOrderFront:nil];
+
+    [app run];
+#endif
 
 }
 
