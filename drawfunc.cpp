@@ -1,6 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // TWILIGHT (Port of old IRIX twilight backdrop from Iris GL to old school OpenGL)
 ///////////////////////////////////////////////////////////////////////////////
+
+#define NDEBUG
 		
 #include <math.h>
 #include <vector>
@@ -64,7 +66,7 @@ void drawfunc( void )
 	assert(glGetError()==0);
 	//////////////////////
 	glFlush();
-	glutSwapBuffers();
+	//glutSwapBuffers();
 	
 }
 

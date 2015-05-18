@@ -29,14 +29,30 @@ GLsizei	gw, gh;
 
 int mainwinid;
 
+#if !defined(OSX)
+#include <GL/glx.h>
+#else
+#import <Cocoa/Cocoa.h>
+
+@interface MyOpenGLView : NSOpenGLView
+@end
+@implementation MyOpenGLView
+-(void) drawRect: (NSRect) bounds
+{
+    drawfunc();
+}
+@end
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char * argv[] )
 {   	
+#if 0
     glutInitWindowPosition( 0, 0 );
     glutInitWindowSize( 640, 480 );	
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE );
+    glutInitDisplayMode(GLUT_RGBA /*| GLUT_DOUBLE*/ );
     mainwinid = glutCreateWindow("Twilight 2013, courtesy of TweakoZ");
    
     glutDisplayFunc(drawfunc);
@@ -56,6 +72,36 @@ int main( int argc, char * argv[] )
     glutMotionFunc( motionhandler );
    
     glutMainLoop(); //glutMainLoopEvent();
+#elif !defined(OSX)
+    Display *dpy = XOpenDisplay(getenv("DISPLAY"));
+    Window root = DefaultRootWindow(dpy);
+    GLint att[] = {GLX_RGBA, None};
+    XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
+    XWindowAttributes gwa;
+
+    glXMakeCurrent(dpy, root, glXCreateContext(dpy, vi, NULL, GL_TRUE));
+
+    while(1) {
+         XGetWindowAttributes(dpy, root, &gwa);
+         gw = gwa.width;
+         gh = gwa.height;
+         drawfunc();
+         usleep(500000);
+    }
+#else
+    NSApplication *app = [[NSApplication alloc] init];
+    NSRect mainDisplayRect = [[NSScreen mainScreen] frame];
+    NSWindow *fullScreenWindow = [[NSWindow alloc] initWithContentRect: mainDisplayRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+
+    gw = mainDisplayRect.size.width;
+    gh = mainDisplayRect.size.height;
+
+    [fullScreenWindow setLevel:kCGDesktopWindowLevel];
+    [fullScreenWindow setContentView:[[MyOpenGLView alloc] init]];
+    [fullScreenWindow makeKeyAndOrderFront:nil];
+
+    [app run];
+#endif
 
 }
 
