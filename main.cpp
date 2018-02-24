@@ -78,15 +78,23 @@ int main( int argc, char * argv[] )
     GLint att[] = {GLX_RGBA, None};
     XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
     XWindowAttributes gwa;
+    XSetWindowAttributes swa;
+    XEvent xev;
+
+    swa.event_mask = ExposureMask;
+    XChangeWindowAttributes(dpy, root, CWEventMask, &swa);
 
     glXMakeCurrent(dpy, root, glXCreateContext(dpy, vi, NULL, GL_TRUE));
 
     while(1) {
-         XGetWindowAttributes(dpy, root, &gwa);
-         gw = gwa.width;
-         gh = gwa.height;
-         drawfunc();
-         usleep(500000);
+        XNextEvent(dpy, &xev);
+
+        if (xev.type == Expose) {
+            XGetWindowAttributes(dpy, root, &gwa);
+            gw = gwa.width;
+            gh = gwa.height;
+            drawfunc();
+        }
     }
 #else
     NSApplication *app = [[NSApplication alloc] init];
