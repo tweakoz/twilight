@@ -31,6 +31,7 @@ int mainwinid;
 
 #if !defined(OSX)
 #include <GL/glx.h>
+#include <stdio.h>
 #else
 #import <Cocoa/Cocoa.h>
 
@@ -74,7 +75,14 @@ int main( int argc, char * argv[] )
     glutMainLoop(); //glutMainLoopEvent();
 #elif !defined(OSX)
     Display *dpy = XOpenDisplay(getenv("DISPLAY"));
-    Window root = DefaultRootWindow(dpy);
+
+    Window win;
+    if (argc == 2) {
+      win = strtoul(argv[1], NULL, 0);
+    } else {
+      printf("Drawing to root window. If you don't see background, provide ID of window to which we should draw as command line argument.\n");
+      win = DefaultRootWindow(dpy);
+    }
     GLint att[] = {GLX_RGBA, None};
     XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
     XWindowAttributes gwa;
@@ -82,15 +90,15 @@ int main( int argc, char * argv[] )
     XEvent xev;
 
     swa.event_mask = ExposureMask;
-    XChangeWindowAttributes(dpy, root, CWEventMask, &swa);
+    XChangeWindowAttributes(dpy, win, CWEventMask, &swa);
 
-    glXMakeCurrent(dpy, root, glXCreateContext(dpy, vi, NULL, GL_TRUE));
+    glXMakeCurrent(dpy, win, glXCreateContext(dpy, vi, NULL, GL_TRUE));
 
     while(1) {
         XNextEvent(dpy, &xev);
 
         if (xev.type == Expose) {
-            XGetWindowAttributes(dpy, root, &gwa);
+            XGetWindowAttributes(dpy, win, &gwa);
             gw = gwa.width;
             gh = gwa.height;
             drawfunc();
