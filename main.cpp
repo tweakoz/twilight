@@ -31,6 +31,7 @@ int mainwinid;
 
 #if !defined(OSX)
 #include <GL/glx.h>
+#include <stdio.h>
 #else
 #import <Cocoa/Cocoa.h>
 
@@ -74,19 +75,34 @@ int main( int argc, char * argv[] )
     glutMainLoop(); //glutMainLoopEvent();
 #elif !defined(OSX)
     Display *dpy = XOpenDisplay(getenv("DISPLAY"));
-    Window root = DefaultRootWindow(dpy);
+
+    Window win;
+    if (argc == 2) {
+      win = strtoul(argv[1], NULL, 0);
+    } else {
+      printf("Drawing to root window. If you don't see background, provide ID of window to which we should draw as command line argument.\n");
+      win = DefaultRootWindow(dpy);
+    }
     GLint att[] = {GLX_RGBA, None};
     XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
     XWindowAttributes gwa;
+    XSetWindowAttributes swa;
+    XEvent xev;
 
-    glXMakeCurrent(dpy, root, glXCreateContext(dpy, vi, NULL, GL_TRUE));
+    swa.event_mask = ExposureMask;
+    XChangeWindowAttributes(dpy, win, CWEventMask, &swa);
+
+    glXMakeCurrent(dpy, win, glXCreateContext(dpy, vi, NULL, GL_TRUE));
 
     while(1) {
-         XGetWindowAttributes(dpy, root, &gwa);
-         gw = gwa.width;
-         gh = gwa.height;
-         drawfunc();
-         usleep(500000);
+        XNextEvent(dpy, &xev);
+
+        if (xev.type == Expose) {
+            XGetWindowAttributes(dpy, win, &gwa);
+            gw = gwa.width;
+            gh = gwa.height;
+            drawfunc();
+        }
     }
 #else
     NSApplication *app = [[NSApplication alloc] init];
