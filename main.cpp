@@ -105,12 +105,13 @@ int main( int argc, char * argv[] )
         }
     }
 #else
-    NSApplication *app = [[NSApplication alloc] init];
+    NSApplication *app = [NSApplication sharedApplication];
+    float factor = [NSScreen mainScreen].backingScaleFactor;
     NSRect mainDisplayRect = [[NSScreen mainScreen] frame];
     NSWindow *fullScreenWindow = [[NSWindow alloc] initWithContentRect: mainDisplayRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
 
-    gw = mainDisplayRect.size.width;
-    gh = mainDisplayRect.size.height;
+    gw = mainDisplayRect.size.width * factor;
+    gh = mainDisplayRect.size.height * factor;
 
     [fullScreenWindow setLevel:kCGDesktopWindowLevel];
     [fullScreenWindow setContentView:[[MyOpenGLView alloc] init]];
